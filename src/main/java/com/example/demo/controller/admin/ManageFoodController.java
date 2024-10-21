@@ -18,10 +18,9 @@ public class ManageFoodController {
     private FoodService foodService;
 
     @GetMapping
-    public ApiRespone<?> getAllFoods(@RequestParam(required = false, defaultValue = "0") int page,
-                                     @RequestParam(required = false, defaultValue = "10") int size  ) {
+    public ApiRespone<?> getAllFoods( ) {
          return ApiRespone.builder()
-                .result(foodService.getAllFood(page,size))
+                .result(foodService.getAllFood())
                 .build();
     }
     @GetMapping("{idfood}")
@@ -51,6 +50,8 @@ public class ManageFoodController {
     		@RequestParam(required = false) String isSelling,
     		@RequestParam(value = "page", defaultValue = "0") int page,
     	    @RequestParam(value = "size", defaultValue = "10") int size){
+        System.out.println(page);
+        System.out.println(size);
     	Pageable pageable = PageRequest.of(page, size);
     	  return ApiRespone.builder()
                   .result(foodService.getFoodFromFilter(nameFood,idCategory,isSelling,pageable))
