@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.*;
+import com.example.demo.enums.ErrorEnum;
 import com.example.demo.enums.OrderStatus;
 import com.example.demo.map.OrderMapper;
 import com.example.demo.repository.*;
@@ -33,6 +34,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     OrderMapper orderMapper;
+
+    @Autowired
+    ShiftRepository shiftRepository;
+
+
 
     @Override
     public OrderResponeDTO saveOrder(List<FoodRequestOrderDTO> listFoodOrder, Integer idTable, String numbePhone) {
@@ -69,6 +75,18 @@ public class OrderServiceImpl implements OrderService {
         }
 
         return orderMapper.toOrderResponeDTO(orderEntity);
+    }
+
+    @Override
+    public List<OrderEntity> findByShift(int id) {
+        try {
+            ShiftEntity shiftEntity = shiftRepository.findById(id).orElseThrow(() -> new RuntimeException(ErrorEnum.SHIFT_NOT_FOUND.getMessage()));
+            List<OrderEntity> listOrder = orderRepository.findByShiftEntity(shiftEntity);
+            return listOrder;
+        }catch (Exception e){
+            return null;
+        }
+
     }
 
 }

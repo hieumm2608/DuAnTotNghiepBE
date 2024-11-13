@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.demo.enums.OrderStatus;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -39,7 +40,10 @@ public class OrderEntity extends BaseEntity {
 	CustomerEntity customer;
 
 	@OneToMany(mappedBy = "orderEntity")
+	@JsonIgnore
 	List<OrderDetailEntity> listOrderDetail;
 
-
+	@ManyToOne
+	@JoinColumn(name= "id_shift")
+	ShiftEntity shiftEntity;
 }

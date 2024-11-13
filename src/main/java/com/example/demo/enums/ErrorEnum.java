@@ -4,6 +4,9 @@ package com.example.demo.enums;
 public enum ErrorEnum {
     NULL_FT(1101, "First test null"),
 
+    // Error Code User 160+
+    user_not_exist(1604, "User not exist"),
+
     // Error code table : 100*
     Table_exist(1001, "Table exist in database"),
     Table_not_exist(1002, "Table not exist in database"),
@@ -31,7 +34,11 @@ public enum ErrorEnum {
 
     // Error request Order : 140*
 
-
+    // Error Shiftr : 150*
+    id_Shift_not_null(1500, "Id Shift not null"),
+    id_shift_not_exist(1501,"Id shift not exist"),
+    SHIFT_NOT_FOUND(1502, "Shift not found"),
+    id_shift_handOver_not_exist(1501,"Id shift handover not exist")
     ;
     private int code;
     private String message;

@@ -21,6 +21,7 @@ public class BaseEntity {
 	@Column(updatable = false)
 	@CreatedDate
 	private Date dateCreate;
+
 	@LastModifiedDate
 	Date dateModify;
 
