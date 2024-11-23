@@ -27,25 +27,27 @@ public class ShiftType {
 
     private String nameShift;
 
-    private LocalTime Startime;
-    private LocalTime Endtime;
+    private LocalTime starTime;
+    private LocalTime endTime;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
+
     public LocalTime getStartime() {
-        return Startime;
+        return starTime;
     }
 
     public void setStartime(LocalTime startime) {
 
-        Startime = LocalTime.parse(startime.format(formatter), formatter);
+        startime = LocalTime.parse(startime.format(formatter), formatter);
     }
 
     public LocalTime getEndtime() {
-        return Endtime;
+
+        return endTime;
     }
 
     public void setEndtime(LocalTime endtime) {
-        Endtime = LocalTime.parse(endtime.format(formatter), formatter);
+        endtime = LocalTime.parse(endtime.format(formatter), formatter);
     }
 }

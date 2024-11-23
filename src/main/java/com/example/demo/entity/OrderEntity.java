@@ -19,7 +19,7 @@ public class OrderEntity extends BaseEntity {
 
 	@Id 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	 Integer idOrder;
+	Integer idOrder;
 	@Column(columnDefinition = "varchar(50)")
 	@Enumerated(EnumType.STRING)
 	private OrderStatus statusOrder;

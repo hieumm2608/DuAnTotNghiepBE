@@ -39,22 +39,24 @@ public class ShiftController {
     private ShiftHandOverServiceImpl shiftHandOverServiceImpl;
 
 
-//    url = http://localhost:8080/api/v1/shift?isWorking=true&idShiftType=1
+//    url = http://localhost:8080/api/v1/shift?isEnding=true&idShiftType=1
     @GetMapping
     public ApiRespone<ShiftResponseDTO> getShiftByDateShifttype(
-            @RequestParam("isWorking") boolean isWorking,
+            @RequestParam("isEnding") boolean isWorking,
             @RequestParam("idShiftType") int idShiftType
     )
     {
+        ShiftEntity shiftEntity = shiftRepository.findByIsWorkingAndShiftType_IdShiftType(isWorking, idShiftType).orElse(null);
 
+        if (shiftEntity == null) {
+            throw new RuntimeException(ErrorEnum.id_shift_not_exist.getMessage());
 
-        ShiftEntity shiftEntity = shiftRepository.findByIsWorkingAndShiftType_IdShiftType(isWorking, idShiftType).orElseThrow(
-                    () -> new RuntimeException(ErrorEnum.id_shift_not_exist.getMessage())
-        );
-        ShiftHandover shiftHandover = shiftHandOverRepository.findByShiftEntity_IdShift(shiftEntity.getIdShift()).orElseThrow(
-                () -> new RuntimeException(ErrorEnum.id_shift_handOver_not_exist.getMessage())
-        );
-        System.out.println("ok");
+        }
+        ShiftHandover shiftHandover = shiftHandOverRepository.findByShiftEntity_IdShift(shiftEntity.getIdShift()).orElse( null);
+        if (shiftHandover == null) {
+            throw new RuntimeException(ErrorEnum.id_shift_handOver_not_exist.getMessage());
+        }
+
         try {
             ApiRespone<ShiftResponseDTO> entity = shiftServiceimpl.toResponse(shiftEntity, shiftHandover);
             return  entity;
@@ -73,17 +75,22 @@ public class ShiftController {
 
 
     @PostMapping()
-    public ShiftEntity createShiftEntity(@RequestBody ShiftRequestDTO shiftRequestDTO) {
+    public ApiRespone<ShiftEntity> createShiftEntity(@RequestBody ShiftRequestDTO shiftRequestDTO) {
+        ApiRespone<ShiftEntity> api = new ApiRespone<>();
         ShiftEntity entity = shiftServiceimpl.createShift(shiftRequestDTO);
         ShiftHandover handover = shiftServiceimpl.createShiftHandover(entity,shiftRequestDTO.getCashStart());
         entity.setShiftHandover(handover);
+
         try {
             shiftRepository.save(entity);
             shiftHandOverRepository.save(handover);
+
         }catch (Exception e){
             e.printStackTrace();
         }
-        return entity;
+        api.setResult(entity);
+        System.out.println(api.getResult());
+        return api;
     }
 
 //    Json createShiftEntity
@@ -107,23 +114,30 @@ public class ShiftController {
 //}
 
     @PostMapping("/{id}")
-    public ShiftEntity Update(@PathVariable("id") Integer idShift,
+    public ApiRespone<ShiftEntity> Update(@PathVariable("id") Integer idShift,
                               @RequestBody ShiftHandOverRequestDTO shiftHandOverRequestDTO) {
 //        find shift byID
-        ShiftEntity entity = shiftRepository.findById(idShift).orElseThrow(
-                () -> new RuntimeException(ErrorEnum.id_shift_not_exist.getMessage())
-        );
-       ShiftHandover shiftHandover = shiftHandOverRepository.findByShiftEntity_IdShift(idShift).orElseThrow(
-               () -> new RuntimeException(ErrorEnum.id_shift_not_exist.getMessage())
-       );
+        ShiftEntity entity = shiftRepository.findById(idShift).orElse(null);
+        entity.setIsWorking(false);
+        if (entity == null) {
+            throw new RuntimeException(ErrorEnum.id_shift_not_exist.getMessage());
+        }
+       ShiftHandover shiftHandover = shiftHandOverRepository.findByShiftEntity_IdShift(idShift).orElse(null);
+
+        if (shiftHandover == null) {
+            throw new RuntimeException(ErrorEnum.id_shift_handOver_not_exist.getMessage() );
+        }
+
+        ApiRespone<ShiftEntity> api = new ApiRespone<ShiftEntity>();
 
         try {
+            shiftRepository.save(entity);
             shiftHandOverServiceImpl.createShiftHandover(entity,shiftHandOverRequestDTO,shiftHandover);
         }catch (Exception e){
             e.printStackTrace();
         }
-
-        return entity;
+        api.setResult(entity);
+        return api;
 //        json
 //        {
 //            "idUser": "32000000-0000-0000-0000-000000000000",

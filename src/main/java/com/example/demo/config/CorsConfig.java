@@ -12,13 +12,17 @@ public class CorsConfig {
 	@Value("${host.fe}")
 	String hostFE;
 
+
+	@Value("http://192.168.1.67:4200")
+	String hostFE1;
+
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-						.allowedOrigins("**", "http://localhost:4200", hostFE)
+						.allowedOrigins("**", "http://localhost:4200", hostFE,hostFE1)
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 						.allowedHeaders("*")
 						.allowCredentials(true);
